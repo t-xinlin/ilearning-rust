@@ -1,0 +1,16 @@
+[package]
+name = "ilearning-rust"
+version = "0.1.0" # don't forget to update html_root_url
+description = "rust lang"
+authors = ["“t_xinlin@sina.com <Happy100>"]
+license = ""
+readme = "README.md"
+documentation = ""
+repository = "https://github.com/t-xinlin/ilearning-rust"
+categories = [""]
+keywords = ["rust", "learn"]
+autotests = true
+autoexamples = true
+edition = "2018"
+
+[dependencies]
