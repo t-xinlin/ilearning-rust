@@ -2,41 +2,11 @@ use std::sync::{Arc, Mutex, mpsc};
 use std::thread;
 use std::thread::JoinHandle;
 
-mod pool;
-
 pub struct ThreadPool {
     workers: Vec<Worker>,
     sender: mpsc::Sender<Job>,
 }
 
-impl ThreadPool {
-    pub fn new(size: usize) -> ThreadPool {
-        assert!(size > 0);
-
-        let (sender, receiver) = mpsc::channel();
-
-        let receiver = Arc::new(Mutex::new(receiver));
-
-        let mut workers = Vec::with_capacity(size);
-
-        for id in 0..size {
-            workers.push(Worker::new(id, Arc::clone(&receiver)));
-        }
-
-        ThreadPool {
-            workers,
-            sender,
-        }
-
-    }
-}
-
-// pub fn spawn<F, T>(f: F) -> JoinHandle
-//     where
-//         F: FnOnce() -> T + Send + 'static,
-//         T: Send + 'static
-
-// # pub struct ThreadPool;
 impl ThreadPool {
     // --snip--
 
@@ -44,9 +14,12 @@ impl ThreadPool {
         where
             F: FnOnce() + Send + 'static
     {
+        let job = Box::new(f);
 
+        self.sender.send(job).unwrap();
     }
 }
+
 
 impl ThreadPool {
     // --snip--
@@ -69,7 +42,6 @@ impl ThreadPool {
         }
     }
     // --snip--
-
 }
 
 struct Worker {
@@ -96,8 +68,6 @@ impl Worker {
             thread,
         }
     }
-
-
 }
 
 trait FnBox {
@@ -112,17 +82,3 @@ impl<F: FnOnce()> FnBox for F {
 
 type Job = Box<FnBox + Send + 'static>;
 
-
-
-impl ThreadPool {
-    // --snip--
-
-    pub fn execute<F>(&self, f: F)
-        where
-            F: FnOnce() + Send + 'static
-    {
-        let job = Box::new(f);
-
-        self.sender.send(job).unwrap();
-    }
-}
