@@ -18,8 +18,6 @@ if ids != null:
   )"#;
     let data: serde_json::Value = rb.py_fetch("", py, &json!({   "delete_flag": 1 })).await.unwrap();
     println!("{}", data);
-
-
 }
 
 pub struct Rbatis<'r> { context_tx: SyncMap<Transaction<PoolConnection<MySqlConnection>>> }
