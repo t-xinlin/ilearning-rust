@@ -1,9 +1,10 @@
 [package]
-name = "ilearn-io"
+name = "ilearn-executor"
 version = "0.1.0"
-authors = ["“t_xinlin@sina.com <Happy100>"]
+authors = ["t_xinlin@sina.com <Happy100>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+futures-preview = "0.3.0-alpha.19"

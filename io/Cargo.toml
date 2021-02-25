@@ -1,7 +1,7 @@
 [package]
-name = "ilearn-webserver"
+name = "ilearn-io"
 version = "0.1.0"
-authors = ["“t_xinlin@sina.com <Happy100>"]
+authors = ["t_xinlin@sina.com <Happy100>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

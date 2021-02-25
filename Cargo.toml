@@ -1,4 +1,10 @@
 [workspace]
 member = [
-
+    "path-rs",
+    "box-rs",
+    "mutex-rwLock",
+    "map-rs",
+    "orm",
+    "log-rs",
+    "list",
 ]
