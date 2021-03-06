@@ -1,5 +1,5 @@
 [workspace]
-member = [
+members = [
     "path-rs",
     "box-rs",
     "mutex-rwLock",
