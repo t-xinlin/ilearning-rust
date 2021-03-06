@@ -1,0 +1,9 @@
+title = "TOML Example"
+[database]
+typ = "mysql"
+name = "xxx"
+user = "xxx"
+pwd = "xxx"
+host = "127.0.0.1:3306"
+connection_max = 5000
+enabled = true
