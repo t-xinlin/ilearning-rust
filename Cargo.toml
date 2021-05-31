@@ -1,3 +1,9 @@
+[package]
+name = "ilearning-rust"
+version = "0.1.0"
+authors = ["t_xinlin@sina.com <Happy100>"]
+edition = "2018"
+
 [workspace]
 members = [
     "path-rs",
@@ -7,4 +13,19 @@ members = [
     "orm",
     "log-rs",
     "list",
+    "sqlx-rs",
+    "macro-rules",
+    "option-result",
+    "error-rs",
+    "borrowing-rs",
+    "trait-rs",
+    'executor',
+    "futures",
+    "actix-web-example",
+    "tokio-cron-scheduler",
+
 ]
+#[dev-dependencies]
+
+[patch.crates-io]
+tokio-cron-scheduler = {path = "tokio-cron-scheduler"}
