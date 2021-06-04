@@ -7,7 +7,6 @@ use cron::Schedule;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::{env, fs, thread};
-use crate::cron::scheduler::Scheduler;
 use futures::future::ok;
 
 pub fn init() ->Result<(), Box<dyn Error>> {
