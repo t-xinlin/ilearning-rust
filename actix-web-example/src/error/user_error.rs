@@ -1,18 +1,18 @@
 use actix_web::{error as httpError, get, http::header, http::StatusCode, App, HttpResponse, HttpServer, HttpResponseBuilder};
 use derive_more::{Display, Error};
 
-// #[derive(Debug, Display, Error)]
-// enum UserError {
-//     #[display(fmt = "Validation error on field: {}", field)]
-//     ValidationError { field: String },
-// }
-//
-// impl httpError::ResponseError for UserError {
-//     fn status_code(&self) -> StatusCode {
-//         match *self {
-//             UserError::ValidationError { .. } => StatusCode::BAD_REQUEST,
-//         }
-//     }
+#[derive(Debug, Display, Error)]
+pub enum UserError {
+    #[display(fmt = "Validation error on field: {}", field)]
+    ValidationError { field: String },
+}
+
+impl httpError::ResponseError for UserError {
+    fn status_code(&self) -> StatusCode {
+        match *self {
+            UserError::ValidationError { .. } => StatusCode::BAD_REQUEST,
+        }
+    }
 
     // fn error_response(&self) ->  HttpResponse {
     //     // HttpResponseBuilder::new(self.status_code())
@@ -20,7 +20,7 @@ use derive_more::{Display, Error};
     //     //     .body(self.to_string())
     //     // Error::R
     // }
-// }
+}
 
 
 #[derive(Debug)]
