@@ -2,15 +2,18 @@
 extern crate log as other_log;
 extern crate log4rs;
 
-use actix_web::{error, get, post, web, App, HttpServer, Responder, HttpRequest};
+use actix_web::{error, get, post, web, App, HttpServer, Responder, HttpRequest, HttpResponse, Result};
 use std::sync::Mutex;
 use serde::{Deserialize, Serialize};
 use actix_web_example::middleware;
 use actix_web_example::log::log;
 use actix_web_example::cron;
+use actix_web_example::user::user;
+use actix_web_example::cron::scheduler;
 use actix_web_example::error::user_error;
+use actix_web_example::security;
 use tokio::time::{sleep, Duration};
-use crate::cron::scheduler;
+use actix_http::http::ContentEncoding;
 
 #[get("/index.html")]
 async fn index(req: HttpRequest) -> impl Responder {
@@ -40,35 +43,17 @@ async fn state(data: web::Data<AppStateWithCounter>) -> impl Responder {
     format!("Request number: {}", counter) // <- response with count
 }
 
-// #[derive(Deserialize)]
-#[derive(Serialize, Deserialize)]
-struct Info {
-    username: String,
-}
-
-/// deserialize `Info` from request's body
-#[post("/user")]
-async fn user(info: web::Json<Info>) -> Result<&'static str, error::Error> {
-    let result: Result<&'static str, user_error::MyError> = Err(user_error::MyError { name: "test error" });
-
-    Ok(result.map_err(|e| error::ErrorBadRequest(e.name))?)
-
-    // Ok(format!("Welcome {}!", info.username))
-}
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     log::init();
-    debug!("===============service starting...");
-    // sleep(Duration::from_millis(100)).await;
-    info!("===============service starting...");
+    security::hmac::testHmacSha256();
+    info!("service starting...");
     let counter = web::Data::new(AppStateWithCounter {
         counter: Mutex::new(0),
     });
-    info!("service start finished");
     // scheduler::RunScheduler().await?;
     HttpServer::new(move || App::new()
-        // .wrap(middleware::read_request_body::ReadReqBody)
+        .wrap(middleware::read_request_body::ReadReqBody)
         .wrap(middleware::jwt::Jwt)
         .app_data(counter.clone()) // <- register the created data
         .service(index)
@@ -76,7 +61,7 @@ async fn main() -> std::io::Result<()> {
             web::scope("/app")
                 .route("/greet", web::get().to(greet))
                 .route("/state", web::post().to(state))
-                .service(user),
+                .service(user::userHandler),
         )
                     // .service(
                     //     web::scope("/test")
