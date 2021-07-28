@@ -1,0 +1,14 @@
+"topic" = "topic01"
+"topics" = ["topic01"]
+[config]
+"bootstrap.servers" = "127.0.0.1:9001,127.0.0.1:9002,127.0.0.1:9003"
+"group.id" = "groupID"
+"session.timeout.ms" = "6000"
+"auto.offset.reset" = "latest"
+"sasl.kerberos.service.name" = "name001"
+"sasl.kerberos.keytab" = "/opt/XXX/xxx.keytab"
+"sasl.kerberos.principal" = "xxx@xxx.COM"
+"sasl.kerberos.realm" = "xxx.xxx.com"
+"security.protocol" = "SASL_PLAINTEXT"
+"api.version.request" = "false"
+"broker.version.fallback" = "0.9.0"
