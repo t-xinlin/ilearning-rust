@@ -1,0 +1,23 @@
+refresh_rate = "30 seconds"
+[appenders]
+stdout.kind = "console"
+stdout.encoder.kind = "pattern"
+stdout.encoder.pattern = '{d(%Y-%m-%d %H:%M:%S%.6f)} {h({l})} {f}:{L} - {m}{n}'
+
+log_file.kind = "rolling_file"
+log_file.append = true
+log_file.path = "log/log.log"
+log_file.encoder.kind = "pattern"
+log_file.encoder.pattern = '{d(%Y-%m-%d %H:%M:%S%.6f)} {h({l})} {f}:{L} - {m}{n}'
+log_file.policy.kind = "compound"
+log_file.policy.trigger.kind = "size"
+log_file.policy.trigger.limit = "5 mb"
+log_file.policy.roller.kind = "fixed_window"
+log_file.policy.roller.pattern = '{0}/requests.mylog.{{}}'
+log_file.policy.roller.base = 1
+log_file.policy.roller.count = 10
+
+[root]
+# httperror < warn < info < debug < trace
+level = "debug"
+appenders = ["stdout", "log_file"]
