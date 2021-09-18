@@ -14,3 +14,5 @@ https://www.zhihu.com/people/andy-lin-9/zvideos
 https://blog.budshome.com/
 
 https://github.com/briansmith/ring
+
+https://liuchengxu.gitbook.io/blockchain/bitcoin/transactions-1
