@@ -16,3 +16,6 @@ https://blog.budshome.com/
 https://github.com/briansmith/ring
 
 https://liuchengxu.gitbook.io/blockchain/bitcoin/transactions-1
+
+算法
+https://zhuanlan.zhihu.com/p/137041568
