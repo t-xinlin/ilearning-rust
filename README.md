@@ -19,3 +19,5 @@ https://liuchengxu.gitbook.io/blockchain/bitcoin/transactions-1
 
 算法
 https://zhuanlan.zhihu.com/p/137041568
+
+KMP的思路分析 https://www.xdull.cn/kmp.html
