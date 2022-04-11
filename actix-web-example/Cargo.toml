@@ -2,14 +2,16 @@
 name = "actix-web-example"
 version = "0.1.0"
 authors = ["t_xinlin@sina.com <Happy100>"]
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-service = "2.0.0-beta.5"
-actix-web = "4.0.0-beta.6"
-actix-http = { version = "3.0.0-beta.6" }
+actix-service = { version = "2.0.1" }
+actix-web = { version = "4.0.1" }
+actix-http = { version = "3.0.4" }
+actix-router = {version = "0.5.0"}
+actix-utils = "3"
 
 futures = "0.3.1"
 futures-util = "^0.3.7"
@@ -26,7 +28,6 @@ chrono = { version = "0.4", features = ["serde"] }
 tokio = { version = "^1.3", features = ["full"] }
 tokio-cron-scheduler = { version = "0.1.0", path = "../tokio-cron-scheduler" }
 
-
 # crypto
 ring = "0.16.20"
 data-encoding = "2.3.2"
@@ -39,6 +40,15 @@ url-escape = "0.1.0"
 html-escape = "0.2.9"
 urlencoding = "1.3.3"
 url_encoded_data = "0.6.1"
+pin-project-lite = "0.2.7"
+pin-project = "1"
+ahash = "0.7"
+futures-core = { version = "0.3.7", default-features = false }
+regex = "1.5.5"
+
+bytes = "1"
+time = { version = "0.3", default-features = false, features = ["formatting"] }
+json = "0.12"
 
 [dev-dependencies]
 tokio-cron-scheduler = { version = "0.1.0", path = "../tokio-cron-scheduler" }
