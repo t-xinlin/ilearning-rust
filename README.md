@@ -21,3 +21,5 @@ https://liuchengxu.gitbook.io/blockchain/bitcoin/transactions-1
 https://zhuanlan.zhihu.com/p/137041568
 
 KMP的思路分析 https://www.xdull.cn/kmp.html
+
+Rust 程序设计语言 https://kaisery.github.io/trpl-zh-cn/title-page.html
