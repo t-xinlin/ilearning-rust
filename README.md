@@ -26,3 +26,8 @@ Rust 程序设计语言 https://kaisery.github.io/trpl-zh-cn/title-page.html
 
 
 并查集 https://blog.csdn.net/wmy0217_/article/details/104972191
+
+
+计算机类常用电子书整理，并且附带下载链接，包括Java，Python，Linux，Go，C，C++，数据结构与算法，人工智能，计算机基础，面试，设计模式，数据库，前端等书籍
+
+https://github.com/t-xinlin/CS-Book
