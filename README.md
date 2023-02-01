@@ -18,6 +18,8 @@ https://github.com/briansmith/ring
 https://liuchengxu.gitbook.io/blockchain/bitcoin/transactions-1
 
 Rust 异步资料整理: https://cfsamson.github.io/books-futures-explained/introduction.html
+https://rust-lang.github.io/async-book/01_getting_started/01_chapter.html
+
 
 算法
 https://zhuanlan.zhihu.com/p/137041568
