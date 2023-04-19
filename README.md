@@ -21,6 +21,9 @@ Rust 异步资料整理: https://cfsamson.github.io/books-futures-explained/intr
 https://rust-lang.github.io/async-book/01_getting_started/01_chapter.html
 
 
+rCore-Tutorial-Book-v3
+https://github.com/rcore-os/rCore-Tutorial-Book-v3
+
 算法
 https://zhuanlan.zhihu.com/p/137041568
 
