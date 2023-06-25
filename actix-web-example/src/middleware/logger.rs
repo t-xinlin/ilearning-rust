@@ -21,7 +21,7 @@ use actix_web::{
 };
 use actix_http::h1::{Payload};
 
-use chrono::{Utc, DateTime, Date, NaiveDateTime};
+use chrono::{Utc, DateTime, NaiveDate, NaiveDateTime};
 use pin_project::__private::PinnedDrop;
 
 // There are two steps in middleware processing.
@@ -86,7 +86,7 @@ impl<S, B> Service<ServiceRequest> for LoggingMiddleware<S>
     actix_service::forward_ready!(service);
 
     fn call(&self, mut req: ServiceRequest) -> Self::Future {
-        let mut svc = self.service.clone();
+        let svc = self.service.clone();
 
         Box::pin(async move {
             let begin = Utc::now();
@@ -94,7 +94,7 @@ impl<S, B> Service<ServiceRequest> for LoggingMiddleware<S>
             let method = req.method().as_str().to_string();
             let queries = req.query_string().to_string();
             let ip = req.head().peer_addr;
-            let protocol = match req.version() {
+            match req.version() {
                 Version::HTTP_09 => "http/0.9",
                 Version::HTTP_10 => "http/1.0",
                 Version::HTTP_11 => "http/1.1",
@@ -121,7 +121,7 @@ impl<S, B> Service<ServiceRequest> for LoggingMiddleware<S>
             let req_headers = json!(headers).to_string();
 
             let req_body = get_request_body(&mut req).await;
-            let mut parsed = parse_body(req_body.unwrap());
+            let parsed = parse_body(req_body.unwrap());
             let req_body: Option<String> = if !parsed.is_object() {
                 None
             } else {
@@ -145,7 +145,7 @@ impl<S, B> Service<ServiceRequest> for LoggingMiddleware<S>
             */
 
             // Exec main function and wait response generated
-            let mut res = svc.call(req).await?;
+            let res = svc.call(req).await?;
 
             let duration = (Utc::now() - begin).num_microseconds();
             let status_code = res.status();
@@ -160,7 +160,7 @@ impl<S, B> Service<ServiceRequest> for LoggingMiddleware<S>
             let res_headers = json!(headers).to_string();
 
             // Get response body
-            let mut res_body = BytesMut::new();
+            let res_body = BytesMut::new();
             // let mut stream = res.into_body();
             // let body_bytes = to_bytes(res.into_body()).await?;
             // let body_bytes = match to_bytes(res.into_body()).await {
