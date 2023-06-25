@@ -6,5 +6,5 @@ pub mod middleware;
 pub mod error;
 pub mod log;
 pub mod handler;
-pub mod util;
 pub mod router;
+pub mod utils;
