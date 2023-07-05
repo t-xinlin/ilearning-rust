@@ -42,3 +42,5 @@ Rust 程序设计语言 https://kaisery.github.io/trpl-zh-cn/title-page.html
 https://github.com/t-xinlin/CS-Book
 
 Kubernetes学习： https://blog.csdn.net/ysf15609260848/article/details/125808830
+
+Rust Web 全栈开发之编写服务器端 Web 应用  https://www.cnblogs.com/QiaoPengjun/p/17332132.html
