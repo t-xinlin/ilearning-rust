@@ -2,9 +2,11 @@
 extern crate log as other_log;
 extern crate log4rs;
 
+use actix_cors::Cors;
 use actix_web::{
     App,
     HttpServer,
+    http::header,
 };
 use actix_web_example::{
     middleware,
@@ -16,7 +18,6 @@ use actix_web_example::{
 pub mod utils;
 
 use std::process;
-use tokio::io::AsyncWriteExt;
 use crate::utils::log as sys_log;
 use crate::utils::scheduler;
 use crate::utils::scheduler::JobTrait;
@@ -41,8 +42,18 @@ async fn run() -> std::io::Result<()> {
     let counter = basic::new_counter();
     // scheduler::RunScheduler().await?;
     HttpServer::new(move || App::new()
+        .wrap(
+            Cors::default()
+                .allowed_origin("http://127.0.0.1:8089")
+                .allowed_methods(vec!["GET", "POST", "DELETE"])
+                .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+                .allowed_header(header::CONTENT_TYPE)
+                .allowed_header("sign")
+                .supports_credentials()
+                .max_age(3600),
+        )
         // .wrap(middleware::ReadReqBody)
-        .wrap(middleware::Jwt)
+        // .wrap(middleware::Jwt)
         // .wrap(middleware::AccessLogging)
         .wrap(middleware::AccessLogging::default().log_target("http_log"))
         .app_data(counter.clone()) // <- register the created data
@@ -60,10 +71,12 @@ async fn scheduler_job() {
         error!("scheduler job run: {}", err);
         process::exit(1);
     });
-    scheduler_job.run(scheduler_expr).await.unwrap_or_else(|err| {
-        error!("scheduler job run: {}", err);
-        process::exit(1);
-    });
+    // scheduler_job.run(scheduler_expr).await.unwrap_or_else(|err| {
+    //     error!("scheduler job run: {}", err.);
+    //     process::exit(1);
+    // });
+
+    scheduler_job.run(scheduler_expr).await.expect("scheduler job run error")
 }
 
 
