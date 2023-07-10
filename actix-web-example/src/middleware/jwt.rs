@@ -28,6 +28,8 @@ use actix_http::{
 };
 
 use std::{io::Write as _};
+use std::collections::HashMap;
+use serde_json::json;
 
 pub struct Jwt;
 
@@ -98,11 +100,14 @@ impl<S, B> Service<ServiceRequest> for JwtMiddleware<S>
         let svc = self.service.clone();
         Box::pin(async move {
             let mut body = BytesMut::new();
+            // if req.method().eq("OPTIONS") {
+            //     return Ok(())
+            // }
             let mut stream = req.take_payload();
             while let Some(chunk) = stream.next().await {
                 body.extend_from_slice(&chunk?);
             }
-            if let Some(sign) = get_content_type(&req, "sign".to_string()) {
+            if let Some(sign) = get_header(&req, "sign".to_string()) {
                 let v: Vec<&str> = sign.split('.').collect();
                 for s in v {
                     debug!("{}", s);
@@ -121,13 +126,22 @@ impl<S, B> Service<ServiceRequest> for JwtMiddleware<S>
             req.set_payload(payload.into());
 
             let res = svc.call(req).await?;
-            debug!("response: {:?}", res.headers());
+
+            // debug!("response: {:?}", res.headers());
+            let mut header_map: HashMap<&str, &str> = HashMap::new();
+            for (k, v) in res.headers().iter() {
+                if let Ok(v) = v.to_str() {
+                    header_map.insert(k.as_str(), v);
+                }
+            }
+            debug!("response headers: {:?}", json!(header_map).to_string());
+
             Ok(res)
             // Err(Error::from(myRespError::MyError::BadClientData))
         })
     }
 }
 
-fn get_content_type(req: &ServiceRequest, key: String) -> Option<&str> {
+fn get_header(req: &ServiceRequest, key: String) -> Option<&str> {
     req.headers().get(key)?.to_str().ok()
 }
