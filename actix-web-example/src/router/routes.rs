@@ -2,7 +2,7 @@
 use actix_web::web;
 use crate::{
     middleware,
-    handler::{basic, user},
+    handler::{basic, user, course},
 };
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
@@ -24,6 +24,9 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
                 .service(user::bytes_handler)
                 .service(user::extract_json_handler)
                 .service(user::json_handler)
-                .service(user::payload_handler),
+                .service(user::payload_handler)
+                .service(course::get_courses)
+                .service(course::add_courses)
+                .service(course::del_courses),
         );
 }
