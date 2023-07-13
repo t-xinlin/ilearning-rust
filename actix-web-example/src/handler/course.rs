@@ -7,7 +7,9 @@ use sqlite::Connection;
 use std::path::Path;
 use actix_web::web::Json;
 use chrono::Local;
-
+use validator::{Validate, ValidationError};
+use sqlite;
+use uuid::Uuid;
 
 macro_rules! ok (($result:expr) => ($result.unwrap()));
 
@@ -25,7 +27,7 @@ fn gen_courses() -> Vec<Course> {
 
         courses.push(Course {
             id: Option::from(row.read::<&str, _>("id").to_string()),
-            teacher_id: Option::from(row.read::<i64, _>("teacher_id")),
+            teacher_id: row.read::<i64, _>("teacher_id"),
             name: Option::from(row.read::<&str, _>("name").to_string()),
             time: Option::from(date_time),
             description: Option::from(row.read::<&str, _>("description").to_string()),
@@ -60,9 +62,25 @@ pub async fn get_courses() -> HttpResponse {
         .json(gen_courses())
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct HttpError {
+    code: String,
+    msg: String,
+}
+
+
 #[post("/courses")]
 pub async fn add_courses(info: web::Json<Course>) -> HttpResponse {
-    insert_test(info);
+    match insert_test(info) {
+        Err(e) => {
+            let msg = HttpError {
+                code: "ACTIX_000001".parse().unwrap(),
+                msg: e.to_string(),
+            };
+            return HttpResponse::BadRequest().json(msg);
+        }
+        _ => {}
+    };
     // debug!("add courses: {}", info.name.unwrap());
     HttpResponse::Ok()
         // .insert_header(("content-type", "application/json"))
@@ -77,10 +95,20 @@ pub async fn del_courses(course_id: web::Path<String>) -> HttpResponse {
         .json(gen_courses())
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+fn validate_unique_username(username: &str) -> Result<(), ValidationError> {
+    if username == "xXxShad0wxXx" {
+        // the value of the username will automatically be added later
+        return Err(ValidationError::new("invalid name"));
+    }
+    Ok(())
+}
+
+#[derive(Debug, Deserialize, Serialize, Validate)]
 pub struct Course {
     pub id: Option<String>,
-    pub teacher_id: Option<i64>,
+    #[validate(range(min = 1, max = 32))]
+    pub teacher_id: i64,
+    #[validate(custom(function = "validate_unique_username", message = "invalid name"))]
     pub name: Option<String>,
     pub time: Option<NaiveDateTime>,
     pub description: Option<String>,
@@ -92,9 +120,6 @@ pub struct Course {
     pub level: Option<String>,
 }
 
-use sqlite;
-use uuid::Uuid;
-
 fn delete_test(course_id: String) {
     let connection = setup_users("actix-web-example.db");
     let query = "DELETE FROM courses WHERE id=:id;";
@@ -104,7 +129,8 @@ fn delete_test(course_id: String) {
     ok!(statement.reset());
 }
 
-fn insert_test(info: Json<Course>) {
+fn insert_test(info: Json<Course>) -> Result<(), &'static str> {
+    info.validate().unwrap();
     let connection = setup_users("actix-web-example.db");
     let query = "INSERT INTO courses VALUES (:id, :teacher_id, :name, :time, :description, :format, :structure, :duration, :price, :language, :level)";
     let mut statement = connection.prepare(query).expect("prepare error");
@@ -115,7 +141,7 @@ fn insert_test(info: Json<Course>) {
     let id = Uuid::new_v4();
 
     statement.bind((":id", id.to_string().as_str())).expect("");
-    statement.bind((":teacher_id", info.teacher_id.clone().unwrap_or_default())).expect("");
+    statement.bind((":teacher_id", info.teacher_id.clone())).expect("");
     statement.bind((":name", info.name.clone().unwrap_or_default().as_str())).expect("");
     statement.bind((":time", date_time.to_string().as_str())).expect("");
     statement.bind((":description", info.description.clone().unwrap_or_default().as_str())).expect("");
@@ -127,4 +153,5 @@ fn insert_test(info: Json<Course>) {
     statement.bind((":level", "1")).expect("");
     ok!(statement.next());
     ok!(statement.reset());
+    Ok(())
 }
