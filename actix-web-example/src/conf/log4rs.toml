@@ -13,7 +13,7 @@ log_file.policy.kind = "compound"
 log_file.policy.trigger.kind = "size"
 log_file.policy.trigger.limit = "5 mb"
 log_file.policy.roller.kind = "fixed_window"
-log_file.policy.roller.pattern = '{0}/requests.mylog.{{}}'
+log_file.policy.roller.pattern = 'log/{0}/log.log.{{}}
 log_file.policy.roller.base = 1
 log_file.policy.roller.count = 10
 
