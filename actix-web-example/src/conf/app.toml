@@ -1,0 +1,27 @@
+[package]
+name = "actix-web-example"
+version = "0.1.0"
+authors = ["t_xinlin@sina.com <Happy100>"]
+
+[log]
+file = ""
+
+[server]
+name = "actix-web"
+services = [
+    { address = "{{addr}}", port = 8088 },
+    { address = "{{addr}}", port = 8088 },
+    { address = "{{addr}}", port = 8088 },
+]
+
+[db]
+db_type = "sqlite"
+host = "127.0.0.1"
+port = 3306
+name = "actix-web-example.db"
+user = "user"
+password = "******"
+ssl_enable = false
+schema = ""
+max_idle = 20
+max_open = 80
