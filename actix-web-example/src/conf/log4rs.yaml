@@ -20,7 +20,7 @@ appenders:
         limit: 2 mb
       roller:
         kind: fixed_window
-        pattern: '{0}/requests.mylog.{{}}'
+        pattern: 'log/{0}/log.log.{{}}'
         base: 1
         count: 5
 
