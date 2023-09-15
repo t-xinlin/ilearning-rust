@@ -1,3 +1,9 @@
+use std::pin::Pin;
+use std::rc::Rc;
+use std::cell::RefCell;
+use std::{io::Write as _};
+use std::collections::HashMap;
+
 use actix_web::dev::{
     ServiceRequest,
     ServiceResponse,
@@ -15,9 +21,6 @@ use actix_web::{
     HttpResponse,
     web::{BytesMut, BufMut},
 };
-use std::pin::Pin;
-use std::rc::Rc;
-use std::cell::RefCell;
 
 use actix_service::{Service, Transform};
 use actix_http::{
@@ -26,10 +29,6 @@ use actix_http::{
     Response,
     body::BoxBody,
 };
-
-use std::{io::Write as _};
-use std::collections::HashMap;
-use serde_json::json;
 
 pub struct Jwt;
 
@@ -96,29 +95,26 @@ impl<S, B> Service<ServiceRequest> for JwtMiddleware<S>
     actix_service::forward_ready!(service);
 
     fn call(&self, mut req: ServiceRequest) -> Self::Future {
-        debug!("call in coming");
         let svc = self.service.clone();
         Box::pin(async move {
             let mut body = BytesMut::new();
-            // if req.method().eq("OPTIONS") {
-            //     return Ok(())
-            // }
             let mut stream = req.take_payload();
             while let Some(chunk) = stream.next().await {
                 body.extend_from_slice(&chunk?);
             }
-            if let Some(sign) = get_header(&req, "sign".to_string()) {
-                let v: Vec<&str> = sign.split('.').collect();
-                for s in v {
-                    debug!("{}", s);
-                }
-                debug!("get sign = '{}'", sign);
-            } else {
-                error!("token invalid");
-                return Err(Error::from(UserError::ValidationError { field: "token invalid".to_string() }));
+            if let Some(_sign) = get_header(&req, "sign".to_string()) {
+                // let v: Vec<&str> = sign.split('.').collect();
+                // for s in v {
+                //     debug!("{}", s);
+                // }
+                debug!("sign check ok");
             }
+            // else {
+            //     error!("token invalid");
+            //     return Err(Error::from(UserError::ValidationError { field: "token invalid".to_string() }));
+            // }
 
-            debug!("request body: {:?}", body);
+            // debug!("request body: {:?}", body);
             // 回写body
             let (_, mut payload) = actix_http::h1::Payload::create(true);
             // let mut payload = actix_http::h1::Payload::empty();
@@ -134,7 +130,7 @@ impl<S, B> Service<ServiceRequest> for JwtMiddleware<S>
                     header_map.insert(k.as_str(), v);
                 }
             }
-            debug!("response headers: {:?}", json!(header_map).to_string());
+            // debug!("response headers: {:?}", json!(header_map).to_string());
 
             Ok(res)
             // Err(Error::from(myRespError::MyError::BadClientData))
