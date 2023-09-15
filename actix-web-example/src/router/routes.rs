@@ -27,6 +27,7 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
                 .service(user::payload_handler)
                 .service(course::get_courses)
                 .service(course::add_courses)
-                .service(course::del_courses),
+                .service(course::del_courses)
+                .service(course::update_courses),
         );
 }
