@@ -1,11 +1,13 @@
 #[macro_use]
-extern crate log as other_log;
+extern crate log as _import;
+extern crate lazy_static;
 extern crate log4rs;
 
-pub mod middleware;
+pub mod conf;
 pub mod error;
-pub mod log;
 pub mod handler;
+pub mod log;
+pub mod middleware;
+pub mod model;
 pub mod router;
 pub mod utils;
-pub mod conf;
