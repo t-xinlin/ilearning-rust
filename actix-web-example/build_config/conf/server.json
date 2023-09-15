@@ -1,0 +1,20 @@
+{
+    "CN": "Server",
+    "hosts": [
+            "localhost",
+            "127.0.0.1",
+            "www.lwl.com",
+            "abc.com"
+       ],
+    "key": {
+        "algo": "ecdsa",
+        "size": 256
+    },
+    "names": [
+        {
+            "C": "CN",
+            "L": "SH",
+            "ST": "SH"
+        }
+    ]
+}
