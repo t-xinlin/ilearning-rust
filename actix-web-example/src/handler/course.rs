@@ -3,12 +3,12 @@ use crate::model;
 
 use std::fmt::Debug;
 
-use chrono::{Local, NaiveDateTime};
-use serde::{Deserialize, Serialize};
-use actix_web::{post, web, HttpResponse, get, delete};
 use actix_web::web::Json;
-use sqlx;
+use actix_web::{delete, get, post, web, HttpResponse};
+use chrono::{Local, NaiveDateTime};
 use futures::TryStreamExt;
+use serde::{Deserialize, Serialize};
+use sqlx;
 use sqlx::Row;
 use uuid::Uuid;
 use validator::Validate;
@@ -18,8 +18,7 @@ use validator::Validate;
 async fn gen_courses() -> Result<Vec<model::Course>, &'static str> {
     let conn = config::SQLITE_CONN.clone();
     let query = "SELECT * FROM courses";
-    let mut rows = sqlx::query(query)
-        .fetch(&conn);
+    let mut rows = sqlx::query(query).fetch(&conn);
 
     let mut courses = Vec::new();
     while let Some(row) = rows.try_next().await.unwrap() {
@@ -41,7 +40,7 @@ async fn gen_courses() -> Result<Vec<model::Course>, &'static str> {
 
         courses.push(model::Course {
             id: Option::from(id),
-            teacher_id: row.try_get("email").unwrap_or_default(),
+            teacher_id: row.try_get("teacher_id").unwrap_or_default(),
             name: Option::from(name),
             time: Option::from(date_time),
             description: Option::from(description),
@@ -86,6 +85,47 @@ pub async fn add_courses(info: web::Json<model::Course>) -> HttpResponse {
     HttpResponse::Ok().json(r)
 }
 
+
+#[post("/courses/update")]
+pub async fn update_courses(info: web::Json<model::Course>) -> HttpResponse {
+    let result = update_test(info).await;
+    match result {
+        Err(e) => {
+            let msg = HttpError {
+                code: "ACTIX_000001".parse().unwrap(),
+                msg: e.to_string(),
+            };
+            return HttpResponse::BadRequest().json(msg);
+        }
+        _ => {}
+    };
+
+    let r = gen_courses().await.unwrap();
+    HttpResponse::Ok().json(r)
+}
+
+async fn update_test(info: Json<model::Course>) -> Result<(), &'static str> {
+    let conn = config::SQLITE_CONN.clone();
+    let query = "UPDATE courses SET teacher_id=?, name=?, time=?, description=?, format=?, structure=?, duration=?, price=?, language=? WHERE id=?";
+    let _last_id = sqlx::query(query)
+        .bind(info.teacher_id)
+        .bind(info.name.clone().unwrap_or_default().as_str())
+        .bind(info.time.clone().unwrap_or_default().to_string().as_str())
+        .bind(info.description.clone().unwrap_or_default().as_str())
+        .bind(info.format.clone().unwrap_or_default().as_str())
+        .bind(info.structure.clone().unwrap_or_default().as_str())
+        .bind(info.duration.clone().unwrap_or_default().as_str())
+        .bind(info.price.clone().unwrap_or_default())
+        .bind(info.language.clone().unwrap_or_default().as_str())
+        .bind(info.id.clone().unwrap_or_default().as_str())
+        .execute(&conn)
+        .await
+        .unwrap()
+        .last_insert_rowid();
+
+    Ok(())
+}
+
 #[delete("/courses/{course_id}")]
 pub async fn del_courses(course_id: web::Path<String>) -> HttpResponse {
     delete_test(course_id.into_inner()).await.unwrap();
@@ -94,18 +134,13 @@ pub async fn del_courses(course_id: web::Path<String>) -> HttpResponse {
 }
 
 async fn delete_test(course_id: String) -> Result<(), &'static str> {
-    // let connection = config::CONN.lock().unwrap();  // setup_users("actix-web-example.db");
-    // let query = "DELETE FROM courses WHERE id=:id;";
-    // let mut statement = ok!(connection.prepare(query));
-    // statement.bind((":id", course_id.as_str())).expect("");
-    // ok!(statement.next());
-    // ok!(statement.reset());
     let conn = config::SQLITE_CONN.clone();
     let query = "DELETE FROM courses WHERE id=?";
     let _last_id = sqlx::query(query)
         .bind(course_id)
         .execute(&conn)
-        .await.unwrap()
+        .await
+        .unwrap()
         .last_insert_rowid();
 
     Ok(())
@@ -136,7 +171,8 @@ async fn insert_test(info: Json<model::Course>) -> Result<(), &'static str> {
         .bind(info.language.clone().unwrap_or_default().as_str())
         .bind("1")
         .execute(&conn)
-        .await.unwrap()
+        .await
+        .unwrap()
         .last_insert_rowid();
     Ok(())
 }
